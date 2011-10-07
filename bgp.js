@@ -118,7 +118,7 @@ BGPviz.prototype.spinit = function() {
     this.render();
 }
 
-BGPviz.prototype.spintctl = function() {
+BGPviz.prototype.spinctl = function() {
     if(this.spin == 0)
 	this.spin = 1;
     else

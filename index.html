@@ -13,8 +13,9 @@
   <script src="bgp.js"></script>
   <script type='text/javascript'>
   //<![CDATA[ 
+  var myBGP = new BGP("testbgp", 8,8,8);
+
   window.onload=function(){
-    var myBGP = new BGP("testbgp", 8, 8, 8);
     myBGP.viz.init("vizdiv", 400, 400);
 
     function anim() {
@@ -30,6 +31,6 @@
 
 <body>
    <div id="vizdiv"></div>
-   <input type="button" value="spin" /> 
+   <input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
 </body>
 </html>
