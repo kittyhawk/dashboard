@@ -16,7 +16,7 @@
   var myBGP = new BGP("testbgp", 8,8,8);
 
   window.onload=function(){
-    myBGP.viz.init("vizdiv", 400, 400);
+    myBGP.viz.init("vizdiv", 800, 800);
 
     function anim() {
       myBGP.viz.animate();
@@ -31,6 +31,8 @@
 
 <body>
    <div id="vizdiv"></div>
+   <input type="button" value="allocate" onclick="myBGP.viz.allocate()"/> 
    <input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
+   <input type="button" value="kill" onclick="myBGP.viz.killNode()"/> 
 </body>
 </html>

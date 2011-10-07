@@ -87,7 +87,7 @@ BGPviz.prototype.init = function(container_id, width, height) {
     bre = document.createElement('br');
 
     container.appendChild(this.stats.domElement);
-    //container.onmousemove = onDocumentMouseMove;    
+    //container.onmousemove = onDocumentMouseMove
 };
 
 // Ooop - this won't work because of requestAnimationFrame
@@ -123,6 +123,21 @@ BGPviz.prototype.spinctl = function() {
 	this.spin = 1;
     else
 	this.spin = 0;
+}
+
+BGPviz.prototype.allocate = function() {
+    var count;
+    var maxnodes = this.max_x*this.max_y*this.max_z;
+
+    for (count = 0; count < maxnodes; count++) {
+	if((count == 0)||(count == 20)) {
+	    this.sphereMaterial[count].color.setHSV(.55, 1, 1); // blue
+	    this.sphereMaterial[count].wireframe = 0;
+	} else {
+	    this.sphereMaterial[count].color.setHSV(.25, 1, 1); // green
+	    this.sphereMaterial[count].wireframe = 0;
+	}
+    }
 }
 
 BGPviz.prototype.render = function() {
