@@ -90,6 +90,10 @@ BGPviz.prototype.init = function(container_id, width, height) {
     //container.onmousemove = onDocumentMouseMove
 };
 
+BGPviz.prototype.render = function() {
+    this.renderer.render(this.scene, this.camera);
+}
+
 // Ooop - this won't work because of requestAnimationFrame
 // I guess we have to wrap this in a global function or something
 BGPviz.prototype.animate = function() {
@@ -102,8 +106,8 @@ BGPviz.prototype.animate = function() {
 BGPviz.prototype.killNode = function()
 {
     var which = Math.floor(Math.random() * 512);
-    this.sphereMaterial[which].color.setHSV(0, 1, 1); // red
-    this.sphereMaterial[which].wireframe = 0;
+
+    this.setMode(which, "dead");
     if(this.spin == 0)
         this.render();
 }
@@ -114,7 +118,7 @@ BGPviz.prototype.spinit = function() {
 	this.rotate = 0;
 
     this.group.rotation.y = this.rotate;
-    this.group.rotation.x = this.rotate
+    this.group.rotation.x = this.rotate;
     this.render();
 }
 
@@ -125,21 +129,40 @@ BGPviz.prototype.spinctl = function() {
 	this.spin = 0;
 }
 
+BGPviz.prototype.setMode = function(count,status) {
+    if(status == "ok") {
+	    this.sphereMaterial[count].color.setHSV(.25, 1, 1); // green
+	    this.sphereMaterial[count].wireframe = 0;
+    }
+    if(status == "admin") {
+	    this.sphereMaterial[count].color.setHSV(.55, 1, 1); // blue
+	    this.sphereMaterial[count].wireframe = 0;
+    }
+    if(status == "dead") {
+	this.sphereMaterial[count].color.setHSV(0, 1, 1); // red
+	this.sphereMaterial[count].wireframe = 0;
+    }
+    if(status == "blank") {
+	this.sphereMaterial[count].color.setHSV(1, 0, 1); // whiteish
+	this.sphereMaterial[count].wireframe = 1;
+    }
+    if(status == "unreachable") {
+	this.sphereMaterial[count].color.setHSV(.1, 1, 1); // reddish
+	this.sphereMaterial[count].wireframe = 0;
+    }
+}
+
 BGPviz.prototype.allocate = function() {
     var count;
     var maxnodes = this.max_x*this.max_y*this.max_z;
 
     for (count = 0; count < maxnodes; count++) {
 	if((count == 0)||(count == 20)) {
-	    this.sphereMaterial[count].color.setHSV(.55, 1, 1); // blue
-	    this.sphereMaterial[count].wireframe = 0;
+	    this.setMode(count, "admin");
 	} else {
-	    this.sphereMaterial[count].color.setHSV(.25, 1, 1); // green
-	    this.sphereMaterial[count].wireframe = 0;
+	    this.setMode(count, "ok");
 	}
     }
+    this.render();
 }
 
-BGPviz.prototype.render = function() {
-    this.renderer.render(this.scene, this.camera);
-}
