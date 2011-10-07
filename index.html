@@ -1,0 +1,35 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Kittyhawk Dashboard</title>
+  <style type='text/css'>
+
+  </style>
+
+  <script type='text/javascript' src="Three.js"></script>
+  <script type='text/javascript' src="RequestAnimationFrame.js"></script>
+  <script type='text/javascript' src="Stats.js"></script>
+  <script type='text/javascript' src="Detector.js"></script>
+  <script src="bgp.js"></script>
+  <script type='text/javascript'>
+  //<![CDATA[ 
+  window.onload=function(){
+    var myBGP = new BGP("testbgp", 8, 8, 8);
+    myBGP.viz.init("vizdiv", 400, 400);
+
+    function anim() {
+      myBGP.viz.animate();
+      requestAnimationFrame(anim);
+    } 
+
+    anim();
+  }
+  //]]>
+  </script>
+</head>
+
+<body>
+   <div id="vizdiv"></div>
+   <input type="button" value="spin" /> 
+</body>
+</html>
