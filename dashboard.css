@@ -5,6 +5,7 @@ body {
     background-color: #000000;
 }
 
+
 #one {
     position: absolute;
     margin: 10px 0 0 10px;
@@ -13,7 +14,7 @@ body {
     -webkit-perspective: 0;
     -webkit-transform-style: preserve-3d;
     -webkit-transform: rotate3d(1, 2, 0, 45deg);
-    z-index: 2;    
+    z-index: 2;
 }
 
 #two {
@@ -49,9 +50,16 @@ body {
     z-index: 2;    
 }
 
+#logos {
+    position: absolute;
+    top: 750px;
+    left: 425px;
+    z-index: -50;
+}
+
 #vizdiv {
     position: absolute;
-    margin: 100px 0 0 250px;
+    margin: 90px 0 0 225px;
 }
 
 .panelb {
