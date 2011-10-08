@@ -7,59 +7,75 @@ body {
 
 
 #one {
-    position: absolute;
+    position: fixed;
     margin: 10px 0 0 10px;
     top: 0px;
     left: 0px;
     -webkit-perspective: 0;
     -webkit-transform-style: preserve-3d;
+    -webkit-transform-origin: 0 50%;
     -webkit-transform: rotate3d(1, 2, 0, 45deg);
     z-index: 2;
 }
 
 #two {
-    position: absolute;
-    margin: 10px 0 0 10px;
+    position: fixed;
     top: 60px;
-    left: 900px;
+    right: 400px;
+    margin: 10px 0 0 10px;
     -webkit-perspective: 0;
+    -webkit-transform-origin: 100% 50%;
     -webkit-transform-style: preserve-3d;
     -webkit-transform: rotate3d(-1, 2, 0, 45deg);
     z-index: 2;    
 }
 
 #three {
-    position: absolute;
-    margin: 100px 0 0 10px;
-    top: 600px;
+    position: fixed;
+    margin: 10px 0 0 10px;
+    bottom: 300px;
     left: 50px;
     -webkit-perspective: 0;
     -webkit-transform-style: preserve-3d;
+    -webkit-transform-origin: 0 50%;
     -webkit-transform: rotate3d(1, -2, 0, 45deg);
     z-index: 2;    
 }
 
 #four {
-    position: absolute;
-    margin: 100px 0 0 10px;
-    top: 550px;
-    left: 860px;
+    position: fixed;
+    margin: 10px 0 0 10px;
+    bottom: 370px;
+    right: 430px;
     -webkit-perspective: 0;
+    -webkit-transform-origin: 100% 50%;
     -webkit-transform-style: preserve-3d;
     -webkit-transform: rotate3d(-1, -2, 0, 45deg);
     z-index: 2;    
 }
 
+#logo {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    margin-left: -150px;
+    z-index: -50;
+}
+
 #logos {
-    position: absolute;
-    top: 750px;
-    left: 425px;
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    margin-left: -225px;
     z-index: -50;
 }
 
 #vizdiv {
-    position: absolute;
-    margin: 90px 0 0 225px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -400px;
+    margin-left: -400px;
 }
 
 .panelb {
