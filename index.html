@@ -14,6 +14,77 @@
   <script type='text/javascript' src="Detector.js"></script>
   <script type='text/javascript' src="roundrect.js"></script>
   <script src="bgp.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Task');
+        data.addColumn('number', 'Hours per Day');
+        data.addRows(5);
+        data.setValue(0, 0, 'Idle');
+        data.setValue(0, 1, 510);
+        data.setValue(1, 0, 'Admin');
+        data.setValue(1, 1, 2);
+        data.setValue(2, 0, 'Compute');
+        data.setValue(2, 1, 0);
+        data.setValue(3, 0, 'Dead');
+        data.setValue(3, 1, 0);
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, {width: 450, height: 300, 
+			backgroundColor: 'transparent',
+			colors: ['grey','blue','green','red'],
+			legendTextStyle: {color: 'white'}});
+      }
+    </script>
+    <script type='text/javascript'>
+	var timeleft = 30*60;
+	var seconds;
+
+	function AddZero(num) {
+    		return ((num >= 0)&&(num < 10))?"0"+num:num+"";
+	}
+ 
+	function decrement() {
+    	//store:
+    	seconds = timeleft;
+    
+    	//get minutes:
+    	var minutes=parseInt(seconds/60);
+    
+    	//shrink:
+    	seconds = (seconds%60);
+    
+    	//get hours:
+    	var hours=parseInt(minutes/60);
+    
+    	//shrink:
+    	minutes = (minutes%60);
+    
+    	//build text:
+    	var strText = AddZero(hours) + ":" + AddZero(minutes) + ":" + AddZero(seconds);
+    
+		timeleft = timeleft - 1;
+      		var timefield = document.getElementById('timeleft');
+		timefield.innerText = strText;
+		if(timeleft <= 0) 
+			clearInterval();
+	}
+
+	function go() {
+		setInterval("decrement()", 1000);
+	}
+    </script>
+    <script type='text/javascript'>
+	function updateAllocNum() {
+    		var anl = document.getElementById('allocnumlabel');
+    		var anr = document.getElementById('allocnum');
+	
+		anl.innerText = anr.value;
+	}
+    </script>	
   <script type='text/javascript'>
   //<![CDATA[ 
   var myBGP = new BGP("testbgp", 8,8,8);
@@ -41,6 +112,7 @@
 
     myBGP.viz.setup();
     anim();
+    go();
   }
   //]]>
   </script>
@@ -51,34 +123,66 @@
      <canvas id="canvasOne" width="500" height="300" class="panelb">
             Your browser doesn't support HTML5 Canvas
      </canvas>
-     <div class="panelf">
-       <h1>Info Panel</h1>
-	<p>what the hell is wrong with this picture man?</p>
-       <div id="three_stats"></div>
+     <div class="panelfl">
+       <h1>Information</h1>
+	<table border=0>
+	<tr>
+	  <td>Allocation ID:</td>
+	  <td>2640</td>
+	</tr>
+	<tr>
+	  <td>Kittyhawk PID:</td>
+	  <td>28935</td>
+	</tr>
+	<tr>
+	  <td>User:</td>
+	  <td>ericvh</td>
+	</tr>
+	<tr>
+	  <td>khctl IP:</td>
+	  <td>172.16.6.14</td>
+	</tr>
+	<tr>
+	  <td>khfoxdev node:</td>
+	  <td>172.16.5.0</td>
+	</tr>
+	<tr>
+	  <td>number of nodes:</td>
+	  <td>512</td>
+	</tr>
+	<tr>
+	  <td>allocation time remaining:</td>
+	  <td id='timeleft'>00:30:00</td>
+	</tr>
+	</table>
      </div>
    </div>
    <div id="two">
         <canvas id="canvasTwo" width="500" height="300" class="panelb">
             Your browser doesn't support HTML5 Canvas
         </canvas>
-     <div class="panelf">
-       <h1>Node Status</h1>
-       <img height=50px src="ibm-logo-white.png">
+     <div class="panelfr">
+       <h1 class="right">Application</h1>
+       <div id="three_stats"></div>
+       <div id="chart_div"></div>
      </div>
    </div>
    <div id="three" width=500>
         <canvas id="canvasThree" width="500" height="300" class="panelb">
             Your browser doesn't support HTML5 Canvas
         </canvas>
-     <div class="panelf">
+     <div class="panelfl">
        <span width=500>
-       <h1>Controls</h1>
-   	<input type="button" value="Allocate 510" onclick="myBGP.viz.allocate()"/> 
-   	<input type="range" min=1 max=510 step=1 value=510/>
+       <h1>Control</h1>
+   	<input type="button" value="Allocate" onclick="myBGP.viz.allocate()"/> 
+	<label id="allocnumlabel" for="allocnum">510</label>
+   	<input id="allocnum" type="range" name="allocsz" min="1" max="510" step="1" value="510" onchange="updateAllocNum()"/>
 	<br/>
    	<input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
 	<br/>
    	<input type="button" value="kill" onclick="myBGP.viz.killNode()"/>
+	<br/>
+   	<input type="button" value="go" onclick="go()"/>
 	<br/>
        </span>
      </div>
@@ -87,9 +191,11 @@
         <canvas id="canvasFour" width="500" height="300" class="panelb">
             Your browser doesn't support HTML5 Canvas
         </canvas>
-     <div class="panelf">
-       <h1>App Status</h1>
-       <img height=50px src="ibm-logo-white.png">
+     <div class="panelfr">
+       <h1 class="right">Status</h1>
+	<div id="appstatus">
+	<img src="https://chart.googleapis.com/chart?cht=pc&chf=bg,s,65432100&chs=450x200&chd=t:10,20,30,20|10,20,30,20,50&chl=||||idle|admin|compute|dead|unreachable&chco=CCCCCC,0000CC,00CC00,CC0000,CCCCCC,0000CC,00CC00,CC0000,FFFF10"/>
+	</div>
      </div>
    </div>
    <div id="logo">

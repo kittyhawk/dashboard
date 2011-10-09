@@ -37,8 +37,8 @@ BGPviz.prototype.init = function(container_id, width, height) {
 
     // set up the sphere vars
     var radius = 5,
-        segments = 10,
-        rings = 10;
+        segments = 8,
+        rings = 8;
 
     var spacing = 15;
     var centerit_x = (this.max_x / 2) * spacing;

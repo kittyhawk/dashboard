@@ -9,6 +9,17 @@ body {
     font-family: 'Michroma', sans-serif;
 }
 
+#chart_div {
+	position: fixed;
+	top: 25px;
+	left: 0px;
+}
+
+#appstatus {
+	position: fixed;
+	top: 70px;
+	left: 0px;
+}
 
 #one {
     position: fixed;
@@ -85,11 +96,28 @@ body {
     z-index: 3;
 }
 
-.panelf {
+.panelfl {
     position: absolute;
     margin: 10px 0 0 10px;
     top: 0px;
     left: 0px;
     color: #ffffff;
+    width: 500px;
     z-index: 7;
 }
+
+.panelfr {
+    position: absolute;
+    margin: 10px 0 0 10px;
+    top: 0px;
+    left: 0px;
+    width: 450px;
+    color: #ffffff;
+    z-index: 7;
+}
+
+H1.right {
+    text-align: right;
+}
+
+
