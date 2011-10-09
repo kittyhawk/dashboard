@@ -16,7 +16,7 @@ var BGPviz = function(x, y, z) {
     this.scene = new THREE.Scene();
     //this.camera = new THREE.Camera(75, width/height, 1, 1000);
     this.renderer = new THREE.WebGLRenderer();
-    this.spin = 1;
+    this.spin = 0;
     this.rotate = 0;
 }
 
@@ -81,13 +81,11 @@ BGPviz.prototype.init = function(container_id, width, height) {
 
     container.appendChild(this.renderer.domElement);
 
-    this.stats.domElement.style.position = 'absolute';
-    this.stats.domElement.style.top = '0px';
+    this.stats.domElement.style.position = 'relative';
+    this.stats.domElement.style.top = '10px';
 
-    bre = document.createElement('br');
-
-    container.appendChild(this.stats.domElement);
-    //container.onmousemove = onDocumentMouseMove
+    var statc = document.getElementById("three_stats");
+    statc.appendChild(this.stats.domElement);
 };
 
 BGPviz.prototype.render = function() {
@@ -150,6 +148,12 @@ BGPviz.prototype.setMode = function(count,status) {
 	this.sphereMaterial[count].color.setHSV(.1, 1, 1); // reddish
 	this.sphereMaterial[count].wireframe = 0;
     }
+}
+
+BGPviz.prototype.setup = function() {
+    this.setMode(0, "admin");
+    this.setMode(20, "admin");
+    this.render();
 }
 
 BGPviz.prototype.allocate = function() {

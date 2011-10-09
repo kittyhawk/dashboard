@@ -3,16 +3,18 @@ body {
     padding: 0px;
     overflow: hidden;
     background-color: #000000;
+    color: #ffffff;
     -webkit-perspective: 1200;
     -webkit-perspective-origin: 50% 50%;
+    font-family: 'Michroma', sans-serif;
 }
 
 
 #one {
     position: fixed;
-    margin: 10px 0 0 10px;
-    top: 0px;
-    left: 0px;
+    top: 20px;
+    left: 20px;
+    width: 500px;
     -webkit-transform-style: preserve-3d;
     -webkit-transform-origin: 0 50%;
     -webkit-transform: rotateY(45deg);
@@ -21,32 +23,34 @@ body {
 
 #two {
     position: fixed;
-    top: 10px;
-    right: 0px;
+    top: 20px;
+    right: 20px;
     -webkit-transform-origin: 100% 50%;
     -webkit-transform-style: preserve-3d;
-    -webkit-transform: translateX( -420px ) translateZ( -288px ) rotateY(325deg);
+    -webkit-transform: rotateY(325deg);
+    width: 500px;
     z-index: 2;    
 }
 
 #three {
     position: fixed;
-    margin: 10px 0 0 10px;
-    bottom: 300px;
-    left: 0px;
+    bottom: 320px;
+    left: 20px;
+    width: 500px;
     -webkit-transform-style: preserve-3d;
-    -webkit-transform-origin: 50% 50%;
+    -webkit-transform-origin: 0% 50%;
     -webkit-transform: rotateY(45deg);
     z-index: 2;    
 }
 
 #four {
     position: fixed;
-    bottom: 0px;
-    right: 0px;
+    bottom: 320px;
+    right: 20px;
+    width: 500px;
     -webkit-transform-style: preserve-3d;
     -webkit-transform-origin: 100% 50%;
-    -webkit-transform: translateX( -420px ) translateY(-300px) translateZ( -288px ) rotateY(325deg);
+    -webkit-transform: rotateY(325deg);
     z-index: 2;    
 }
 
@@ -86,6 +90,6 @@ body {
     margin: 10px 0 0 10px;
     top: 0px;
     left: 0px;
-    color: 0xcc0000;
+    color: #ffffff;
     z-index: 7;
 }

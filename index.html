@@ -6,6 +6,8 @@
     @import url('dashboard.css');
   </style>
 
+  <link href='http://fonts.googleapis.com/css?family=Michroma' rel='stylesheet' type='text/css'>
+
   <script type='text/javascript' src="Three.js"></script>
   <script type='text/javascript' src="RequestAnimationFrame.js"></script>
   <script type='text/javascript' src="Stats.js"></script>
@@ -37,6 +39,7 @@
     panelBg("canvasThree");
     panelBg("canvasFour");
 
+    myBGP.viz.setup();
     anim();
   }
   //]]>
@@ -50,7 +53,8 @@
      </canvas>
      <div class="panelf">
        <h1>Info Panel</h1>
-       <img height=50px src="ibm-logo-white.png">
+	<p>what the hell is wrong with this picture man?</p>
+       <div id="three_stats"></div>
      </div>
    </div>
    <div id="two">
@@ -62,13 +66,21 @@
        <img height=50px src="ibm-logo-white.png">
      </div>
    </div>
-   <div id="three">
+   <div id="three" width=500>
         <canvas id="canvasThree" width="500" height="300" class="panelb">
             Your browser doesn't support HTML5 Canvas
         </canvas>
      <div class="panelf">
+       <span width=500>
        <h1>Controls</h1>
-       <img height=50px src="ibm-logo-white.png" onClick='alert("hello!")'>
+   	<input type="button" value="Allocate 510" onclick="myBGP.viz.allocate()"/> 
+   	<input type="range" min=1 max=510 step=1 value=510/>
+	<br/>
+   	<input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
+	<br/>
+   	<input type="button" value="kill" onclick="myBGP.viz.killNode()"/>
+	<br/>
+       </span>
      </div>
    </div>
    <div id="four">
@@ -89,8 +101,5 @@
 	<img height=200px src="doe-logo.png">
 	<img height=50px src="ibm-logo-white.png">
    </div>
-   <input type="button" value="allocate" onclick="myBGP.viz.allocate()"/> 
-   <input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
-   <input type="button" value="kill" onclick="myBGP.viz.killNode()"/>
 </body>
 </html>
