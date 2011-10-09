@@ -72,10 +72,6 @@
 		if(timeleft <= 0) 
 			clearInterval();
 	}
-
-	function go() {
-		setInterval("decrement()", 1000);
-	}
     </script>
     <script type='text/javascript'>
 	function updateAllocNum() {
@@ -90,7 +86,7 @@
   var myBGP = new BGP("testbgp", 8,8,8);
 
   window.onload=function(){
-    myBGP.viz.init("vizdiv", 800, 800);
+    myBGP.viz.init("vizdiv", 500, 500);
 
     function anim() {
       myBGP.viz.animate();
@@ -112,7 +108,7 @@
 
     myBGP.viz.setup();
     anim();
-    go();
+    setInterval("decrement()", 1000);
   }
   //]]>
   </script>
@@ -175,8 +171,8 @@
        <span width=500>
        <h1>Control</h1>
    	<input type="button" value="Allocate" onclick="myBGP.viz.allocate()"/> 
-	<label id="allocnumlabel" for="allocnum">510</label>
    	<input id="allocnum" type="range" name="allocsz" min="1" max="510" step="1" value="510" onchange="updateAllocNum()"/>
+	<label id="allocnumlabel" for="allocnum">510</label>
 	<br/>
    	<input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
 	<br/>
@@ -199,13 +195,13 @@
      </div>
    </div>
    <div id="logo">
-	<img width=300px src="khdash-logo.png">
+	<img width=200px src="khdash-logo.png">
    </div>
    <div id="vizdiv"></div>
    <div id="logos">
-	<img height=50px src="boston-university-logo.gif">
-	<img height=200px src="doe-logo.png">
-	<img height=50px src="ibm-logo-white.png">
+	<img height=25px src="boston-university-logo.gif">
+	<img height=100px src="doe-logo.png">
+	<img height=25px src="ibm-logo-white.png">
    </div>
 </body>
 </html>
