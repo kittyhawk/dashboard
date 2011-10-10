@@ -170,13 +170,13 @@
      <div class="panelfl">
        <span width=500>
        <h1>Control</h1>
-   	<input type="button" value="Allocate" onclick="myBGP.viz.allocate()"/> 
+   	<input type="button" value="Allocate" onclick="myBGP.alloc(document.getElementById('allocnum').value)"/>
    	<input id="allocnum" type="range" name="allocsz" min="1" max="510" step="1" value="510" onchange="updateAllocNum()"/>
 	<label id="allocnumlabel" for="allocnum">510</label>
 	<br/>
    	<input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
 	<br/>
-   	<input type="button" value="kill" onclick="myBGP.viz.killNode()"/>
+   	<input type="button" value="kill" onclick="myBGP.killrand()"/>
 	<br/>
    	<input type="button" value="go" onclick="go()"/>
 	<br/>

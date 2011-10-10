@@ -23,8 +23,49 @@ var BGPviz = function(x, y, z) {
 var BGP = function(nodename, x, y, z) {
     this.nodename = nodename;
     this.nodes = x*y*z;
+    this.admin = 2;
+    this.allocated = 0;
+    this.dead = 0;
+    this.appdead = 0;
     this.viz = new BGPviz(x, y, z);
 };
+
+BGP.prototype.alloc = function( n ) {
+	var num = parseInt(n);
+	if ((this.allocated + this.admin + num) > this.nodes) {
+		num = this.nodes - (this.allocated + this.admin);
+	}
+
+	var count = num;
+	var index = this.allocated + 1;
+        if(index > 20) {
+        	index = index + 1;
+        }
+	while(count > 0) {
+		if(index != 20) {
+			if(index < this.nodes)
+				this.viz.allocateNode(index);
+			count = count - 1;
+		}
+		index = index + 1;
+	}
+	this.allocated = this.allocated + num;
+	this.viz.render();
+}
+
+BGP.prototype.kill = function( num ) {
+	this.dead++;
+	this.appdead++;
+	// TODO: modified appdead based on openmpi aggregation
+	this.viz.killNode(num);
+	this.viz.render();
+}
+
+
+BGP.prototype.killrand = function() {
+	var which = Math.floor(Math.random() * this.nodes);
+	this.kill(which);
+}
 
 BGPviz.prototype.init = function(container_id, width, height) {
     var geometry, material, mesh;
@@ -101,13 +142,10 @@ BGPviz.prototype.animate = function() {
     this.stats.update();
 };
 
-BGPviz.prototype.killNode = function()
+BGPviz.prototype.killNode = function(which)
 {
-    var which = Math.floor(Math.random() * 512);
 
     this.setMode(which, "dead");
-    if(this.spin == 0)
-        this.render();
 }
 
 BGPviz.prototype.spinit = function() {
@@ -156,17 +194,7 @@ BGPviz.prototype.setup = function() {
     this.render();
 }
 
-BGPviz.prototype.allocate = function() {
-    var count;
-    var maxnodes = this.max_x*this.max_y*this.max_z;
-
-    for (count = 0; count < maxnodes; count++) {
-	if((count == 0)||(count == 20)) {
-	    this.setMode(count, "admin");
-	} else {
-	    this.setMode(count, "ok");
-	}
-    }
-    this.render();
+BGPviz.prototype.allocateNode = function(node) {
+    this.setMode(node, "ok");
 }
 
