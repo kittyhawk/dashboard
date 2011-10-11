@@ -68,17 +68,24 @@ BGP.prototype.killrand = function() {
 }
 // BUG: doesn't differentiate admin dead from app dead
 BGP.prototype.updateinfo = function () {
-	// update info pane
         var field = document.getElementById('info.nodes');
+	var idlenodes = ((this.nodes - (this.allocated+this.admin+this.dead+this.appdead))/this.nodes)*100;
+	var allocated = ((this.allocated-(this.dead+this.admin))/this.nodes)*100;
+	if(allocated < 0)
+		allocated = 0;
+	if(idlenodes < 0)
+		idlenodes = 0;
+	var dead = (this.dead/this.nodes)*100;
+	var appdead = (this.appdead/this.nodes)*100;
+	var admin = (this.admin/this.nodes)*100;
         var contents = this.nodes + " / " + this.admin + " / " + this.allocated + " / " + this.dead;
+        var graphdebug = this.nodes + " = " + idlenodes + "/" + admin + " / " + allocated + " / " + dead;
+	// update info pane
         field.innerText = contents;	
-	var idlenodes = this.nodes - (this.allocated+this.admin+this.dead+this.appdead);
-	var allocated = this.allocated;
-	var dead = this.dead;
-	var appdead = this.appdead;
-	var admin = this.admin;
+	field = document.getElementById("graph.debug");
+	field.innerText = graphdebug;
 	// update chart
-	var dataval = 't:'+idlenodes+','+allocated+','+admin+','+dead+',0|' + idlenodes+','+(allocated-appdead)+','+admin+','+dead+','+appdead;
+	var dataval = 't:'+idlenodes+','+allocated+','+admin+','+dead+',0|' + idlenodes+','+allocated+','+admin+','+dead+','+appdead;
 	var chartprefix="https://chart.googleapis.com/chart?cht=pc&chf=bg,s,65432100&chs=450x200&chd=";
 	var chartsuffix="&chl=|||||idle|compute|admin|dead&chco=777777,007700,000077,770000,FFFF10,EEEEEE,00EE00,0000EE,EE0000,FFFF10";
 
