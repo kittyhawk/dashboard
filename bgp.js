@@ -55,11 +55,31 @@ BGP.prototype.alloc = function( n ) {
 }
 
 BGP.prototype.kill = function( num ) {
+	var count=0;
 	this.dead++;
+	if((num == 0)||(num == 20)) {
+		/* everybody dead */
+	} else if(num <= 8) { /* aggregation nodes */
+		/* everyone in subrank dead */
+		for(count = 0; count < this.allocated; count++) {
+			if((count % num) == 0) {
+				this.appdead++;
+				if(count<20) {
+					this.viz.killApp(count)
+				} else {
+					this.viz.killApp(count+1);
+				}
+			}
+		}
+	}
 	// TODO: modified appdead based on openmpi aggregation
 	this.viz.killNode(num);
 	this.viz.render();
 	this.updateinfo();
+}
+BGP.prototype.killcore = function() {
+	var which = Math.floor(Math.random() * 8);
+	this.kill(which);
 }
 
 BGP.prototype.killrand = function() {
@@ -69,25 +89,31 @@ BGP.prototype.killrand = function() {
 // BUG: doesn't differentiate admin dead from app dead
 BGP.prototype.updateinfo = function () {
         var field = document.getElementById('info.nodes');
-	var idlenodes = ((this.nodes - (this.allocated+this.admin+this.dead+this.appdead))/this.nodes)*100;
+	var idlenodes = ((this.nodes - (this.allocated+this.admin+this.dead))/this.nodes)*100;
+	var appidlenodes = ((this.nodes - (this.allocated+this.admin+this.dead+this.appdead))/this.nodes)*100;
 	var allocated = ((this.allocated-(this.dead+this.admin))/this.nodes)*100;
+	var appallocated = ((this.allocated-(this.dead+this.admin+this.appdead))/this.nodes)*100;
 	if(allocated < 0)
 		allocated = 0;
+	if(appallocated < 0)
+		appallocated = 0;
 	if(idlenodes < 0)
 		idlenodes = 0;
+	if(appidlenodes < 0)
+		appidlenodes = 0;
 	var dead = (this.dead/this.nodes)*100;
 	var appdead = (this.appdead/this.nodes)*100;
 	var admin = (this.admin/this.nodes)*100;
-        var contents = this.nodes + " / " + this.admin + " / " + this.allocated + " / " + this.dead;
-        var graphdebug = this.nodes + " = " + idlenodes + "/" + admin + " / " + allocated + " / " + dead;
+        var contents = this.nodes + " / " + this.admin + " / " + this.allocated + " / " + this.dead + " / " + this.appdead;
+        var graphdebug = this.nodes + " = " + idlenodes + "/" + admin + " / " + allocated + " / " + appdead + "/" + dead;
 	// update info pane
         field.innerText = contents;	
 	field = document.getElementById("graph.debug");
 	field.innerText = graphdebug;
 	// update chart
-	var dataval = 't:'+idlenodes+','+allocated+','+admin+','+dead+',0|' + idlenodes+','+allocated+','+admin+','+dead+','+appdead;
+	var dataval = 't:'+idlenodes+','+allocated+','+admin+','+'0,'+ dead+'|' + appidlenodes+','+appallocated+','+admin+','+appdead+','+dead;
 	var chartprefix="https://chart.googleapis.com/chart?cht=pc&chf=bg,s,65432100&chs=450x200&chd=";
-	var chartsuffix="&chl=|||||idle|compute|admin|dead&chco=777777,007700,000077,770000,FFFF10,EEEEEE,00EE00,0000EE,EE0000,FFFF10";
+	var chartsuffix="&chl=|||||idle|compute|admin|unreachable|dead&chco=777777,007700,000077,FFFF10,770000,EEEEEE,00EE00,0000EE,FFFF10,EE0000";
 
 	var chartdom = document.getElementById('nodechartimg');
 	chartdom.src = chartprefix+dataval+chartsuffix;
@@ -171,6 +197,11 @@ BGPviz.prototype.animate = function() {
 BGPviz.prototype.killNode = function(which)
 {
     this.setMode(which, "dead");
+}
+
+BGPviz.prototype.killApp = function(which)
+{
+    this.setMode(which, "unreachable");
 }
 
 BGPviz.prototype.spinit = function() {
