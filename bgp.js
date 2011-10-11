@@ -51,20 +51,39 @@ BGP.prototype.alloc = function( n ) {
 	}
 	this.allocated = this.allocated + num;
 	this.viz.render();
+	this.updateinfo();
 }
 
 BGP.prototype.kill = function( num ) {
 	this.dead++;
-	this.appdead++;
 	// TODO: modified appdead based on openmpi aggregation
 	this.viz.killNode(num);
 	this.viz.render();
+	this.updateinfo();
 }
-
 
 BGP.prototype.killrand = function() {
 	var which = Math.floor(Math.random() * this.nodes);
 	this.kill(which);
+}
+// BUG: doesn't differentiate admin dead from app dead
+BGP.prototype.updateinfo = function () {
+	// update info pane
+        var field = document.getElementById('info.nodes');
+        var contents = this.nodes + " / " + this.admin + " / " + this.allocated + " / " + this.dead;
+        field.innerText = contents;	
+	var idlenodes = this.nodes - (this.allocated+this.admin+this.dead+this.appdead);
+	var allocated = this.allocated;
+	var dead = this.dead;
+	var appdead = this.appdead;
+	var admin = this.admin;
+	// update chart
+	var dataval = 't:'+idlenodes+','+allocated+','+admin+','+dead+',0|' + idlenodes+','+(allocated-appdead)+','+admin+','+dead+','+appdead;
+	var chartprefix="https://chart.googleapis.com/chart?cht=pc&chf=bg,s,65432100&chs=450x200&chd=";
+	var chartsuffix="&chl=|||||idle|compute|admin|dead&chco=777777,007700,000077,770000,FFFF10,EEEEEE,00EE00,0000EE,EE0000,FFFF10";
+
+	var chartdom = document.getElementById('nodechartimg');
+	chartdom.src = chartprefix+dataval+chartsuffix;
 }
 
 BGPviz.prototype.init = function(container_id, width, height) {
@@ -144,7 +163,6 @@ BGPviz.prototype.animate = function() {
 
 BGPviz.prototype.killNode = function(which)
 {
-
     this.setMode(which, "dead");
 }
 

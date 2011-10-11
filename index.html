@@ -14,31 +14,7 @@
   <script type='text/javascript' src="Detector.js"></script>
   <script type='text/javascript' src="roundrect.js"></script>
   <script src="bgp.js"></script>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Task');
-        data.addColumn('number', 'Hours per Day');
-        data.addRows(5);
-        data.setValue(0, 0, 'Idle');
-        data.setValue(0, 1, 510);
-        data.setValue(1, 0, 'Admin');
-        data.setValue(1, 1, 2);
-        data.setValue(2, 0, 'Compute');
-        data.setValue(2, 1, 0);
-        data.setValue(3, 0, 'Dead');
-        data.setValue(3, 1, 0);
-
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, {width: 450, height: 300, 
-			backgroundColor: 'transparent',
-			colors: ['grey','blue','green','red'],
-			legendTextStyle: {color: 'white'}});
-      }
-    </script>
+  <script type="text/javascript" src="gchart_uncompress.js"></script>
     <script type='text/javascript'>
 	var timeleft = 30*60;
 	var seconds;
@@ -48,25 +24,31 @@
 	}
  
 	function decrement() {
-    	//store:
-    	seconds = timeleft;
+    		//store:
+    		seconds = timeleft;
     
-    	//get minutes:
-    	var minutes=parseInt(seconds/60);
+    		//get minutes:
+    		var minutes=parseInt(seconds/60);
     
-    	//shrink:
-    	seconds = (seconds%60);
+    		//shrink:
+    		seconds = (seconds%60);
     
-    	//get hours:
-    	var hours=parseInt(minutes/60);
+    		//get hours:
+    		var hours=parseInt(minutes/60);
     
-    	//shrink:
-    	minutes = (minutes%60);
+    		//shrink:
+    		minutes = (minutes%60);
     
-    	//build text:
-    	var strText = AddZero(hours) + ":" + AddZero(minutes) + ":" + AddZero(seconds);
-    
-		timeleft = timeleft - 1;
+    		//build text:
+    		var strText = AddZero(hours) + ":" + AddZero(minutes) + ":" + AddZero(seconds);
+   
+		if(timeleft > 0) 
+			timeleft = timeleft - 1;
+		
+		if(timeleft < (60*5)) {
+			/* TODO: Change text color to red */
+		}
+
       		var timefield = document.getElementById('timeleft');
 		timefield.innerText = strText;
 		if(timeleft <= 0) 
@@ -107,6 +89,7 @@
     panelBg("canvasFour");
 
     myBGP.viz.setup();
+    myBGP.updateinfo();
     anim();
     setInterval("decrement()", 1000);
   }
@@ -144,7 +127,7 @@
 	</tr>
 	<tr>
 	  <td>number of nodes:</td>
-	  <td>512</td>
+	  <td><span id="info.nodes"></span></td>
 	</tr>
 	<tr>
 	  <td>allocation time remaining:</td>
@@ -159,7 +142,6 @@
         </canvas>
      <div class="panelfr">
        <h1 class="right">Application</h1>
-       <div id="three_stats"></div>
        <div id="chart_div"></div>
      </div>
    </div>
@@ -170,16 +152,18 @@
      <div class="panelfl">
        <span width=500>
        <h1>Control</h1>
-   	<input type="button" value="Allocate" onclick="myBGP.alloc(document.getElementById('allocnum').value)"/>
+	<div id="controls">
+   	<input type="button" class="myButton" value="Allocate" onclick="myBGP.alloc(document.getElementById('allocnum').value)"/>
    	<input id="allocnum" type="range" name="allocsz" min="1" max="510" step="1" value="510" onchange="updateAllocNum()"/>
 	<label id="allocnumlabel" for="allocnum">510</label>
 	<br/>
-   	<input type="button" value="spin" onclick="myBGP.viz.spinctl()"/> 
+   	<input type="button" class="myButton" value="spin" onclick="myBGP.viz.spinctl()"/> 
 	<br/>
-   	<input type="button" value="kill" onclick="myBGP.killrand()"/>
+   	<input type="button" class="myButton" value="kill" onclick="myBGP.killrand()"/>
 	<br/>
-   	<input type="button" value="go" onclick="go()"/>
+   	<input type="button" class="myButton" value="go" onclick="go()"/>
 	<br/>
+	</div>
        </span>
      </div>
    </div>
@@ -189,9 +173,10 @@
         </canvas>
      <div class="panelfr">
        <h1 class="right">Status</h1>
-	<div id="appstatus">
-	<img src="https://chart.googleapis.com/chart?cht=pc&chf=bg,s,65432100&chs=450x200&chd=t:10,20,30,20|10,20,30,20,50&chl=||||idle|admin|compute|dead|unreachable&chco=CCCCCC,0000CC,00CC00,CC0000,CCCCCC,0000CC,00CC00,CC0000,FFFF10"/>
+	<div id="nodechart">
+	<img id="nodechartimg"/>
 	</div>
+       <div id="three_stats"></div>
      </div>
    </div>
    <div id="logo">
