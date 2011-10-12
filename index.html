@@ -16,7 +16,7 @@
   <script src="bgp.js"></script>
   <script type="text/javascript" src="gchart_uncompress.js"></script>
     <script type='text/javascript'>
-	var timeleft = 30*60;
+	var timeleft = 6*60;
 	var seconds;
 
 	function AddZero(num) {
@@ -26,7 +26,7 @@
 	function decrement() {
     		//store:
     		seconds = timeleft;
-    
+		    
     		//get minutes:
     		var minutes=parseInt(seconds/60);
     
@@ -45,11 +45,12 @@
 		if(timeleft > 0) 
 			timeleft = timeleft - 1;
 		
-		if(timeleft < (60*5)) {
-			/* TODO: Change text color to red */
-		}
-
       		var timefield = document.getElementById('timeleft');
+		if(timeleft < (60*1)) {
+			timefield.style = "color: #ff0000;";
+		} else if(timeleft < (60*5)) {
+			timefield.style = "color: #ffff10;";	
+		}
 		timefield.innerText = strText;
 		if(timeleft <= 0) 
 			clearInterval();
@@ -131,7 +132,7 @@
 	</tr>
 	<tr>
 	  <td>allocation time remaining:</td>
-	  <td id='timeleft'>00:30:00</td>
+	  <td><span id='timeleft'>00:30:00</span></td>
 	</tr>
 	</table>
      </div>
@@ -177,7 +178,9 @@
    	<input type="button" class="myButton" value="spin" onclick="myBGP.viz.spinctl()"/> 
 	<br/>
    	<input type="button" class="myButton" value="kill (legacy)" onclick="myBGP.killall()"/>
+	<br/>
    	<input type="button" class="myButton" value="kill core" onclick="myBGP.killcore()"/>
+	<br/>
    	<input type="button" class="myButton" value="kill random" onclick="myBGP.killrand()"/>
 	<br/>
 	</div>
