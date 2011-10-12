@@ -23,12 +23,57 @@ var BGPviz = function(x, y, z) {
 var BGP = function(nodename, x, y, z) {
     this.nodename = nodename;
     this.nodes = x*y*z;
+    this.maxtree = 0;
     this.admin = 2;
     this.allocated = 0;
     this.dead = 0;
     this.appdead = 0;
+    this.status = [];
+    this.node = [];
     this.viz = new BGPviz(x, y, z);
+    var count;
+    for(count = 0; count < this.nodes; count++) {
+	if((count == 0)||(count==20)) {
+		this.status[count] = "admin";
+	} else {
+		this.status[count] = "idle";
+	}
+    }
 };
+
+var BGPnode = function(child1, child2) {
+	this.child1 = child1;
+	this.child2 = child2;
+}
+
+BGP.prototype.noderank = function () {
+	// need to organize nodes in a tree
+	var parent_node = 0;
+	var child_node = 1;
+	var child1 = -1;
+	var child2 = -1;
+	while (child_node < this.nodes) {
+		while((parent_node < this.nodes)&&(this.status[parent_node] != "ok")) {
+			parent_node++;
+		}
+		while((child_node < this.nodes)&&(this.status[child_node] != "ok")) {
+			child_node++;
+		}
+		child1 = child_node;
+		child_node++;
+		while((child_node < this.nodes)&&
+			(this.status[child_node] != "ok")) {
+			child_node++;
+		}
+		if(child_node < this.nodes) {
+			child2 = child_node;
+			child_node++;	
+		}
+		this.node[parent_node] = new BGPnode(child1,child2);
+		parent_node++;
+	}
+	this.maxtree = parent_node-1;
+}
 
 BGP.prototype.alloc = function( n ) {
 	var num = parseInt(n);
@@ -41,58 +86,72 @@ BGP.prototype.alloc = function( n ) {
         if(index > 20) {
         	index = index + 1;
         }
-	while(count > 0) {
-		if(index != 20) {
-			if(index < this.nodes)
+	while((count > 0)&&(index < this.nodes)) {
+		if(this.status[index]=="idle") {
+			if(index < this.nodes) {
 				this.viz.allocateNode(index);
-			count = count - 1;
+				this.status[index]="ok";
+				count = count - 1;
+			}
 		}
 		index = index + 1;
 	}
 	this.allocated = this.allocated + num;
 	this.viz.render();
+	this.noderank();
 	this.updateinfo();
 }
 
-BGP.prototype.kill = function( num ) {
-	var count=0;
-	this.dead++;
-	if((num == 0)||(num == 20)) {
-		/* everybody dead */
-	} else if(num <= 8) { /* aggregation nodes */
-		/* everyone in subrank dead */
-		for(count = 0; count < this.allocated; count++) {
-			if((count % num) == 0) {
-				this.appdead++;
-				if(count<20) {
-					this.viz.killApp(count)
-				} else {
-					this.viz.killApp(count+1);
-				}
-			}
+BGP.prototype.kill = function( n, state ) {
+	var node = n;
+	if(this.status[node] == "ok") {
+		if(state == 1) {
+			this.viz.killNode( node );
+			this.allocated--;
+			this.dead++;
+		} else {
+			this.viz.killApp( node );
+			this.appdead++;
 		}
 	}
+	if((node < this.maxtree)&&(node != 0)&&(node != 20)) {
+		if(this.node[node].child1 > 0)
+			this.kill( this.node[node].child1, 0 );
+		if(this.node[node].child2 > 0)
+			this.kill( this.node[node].child2, 0 );
+	}
+	if(state == 1) {
+		this.viz.render();
+		this.updateinfo();
+	}
+}
+
+BGP.prototype.killold = function( num ) {
 	// TODO: modified appdead based on openmpi aggregation
-	this.viz.killNode(num);
-	this.viz.render();
+	if(this.status[num] == "ok") {
+		this.viz.killNode(num);
+		this.allocated--;
+		this.dead++;
+		this.viz.render();
+	}
 	this.updateinfo();
 }
 BGP.prototype.killcore = function() {
 	var which = Math.floor(Math.random() * 8);
-	this.kill(which);
+	this.kill(which, 1);
 }
 
 BGP.prototype.killrand = function() {
 	var which = Math.floor(Math.random() * this.nodes);
-	this.kill(which);
+	this.kill(which, 1);
 }
 // BUG: doesn't differentiate admin dead from app dead
 BGP.prototype.updateinfo = function () {
         var field = document.getElementById('info.nodes');
 	var idlenodes = ((this.nodes - (this.allocated+this.admin+this.dead))/this.nodes)*100;
 	var appidlenodes = ((this.nodes - (this.allocated+this.admin+this.dead+this.appdead))/this.nodes)*100;
-	var allocated = ((this.allocated-(this.dead+this.admin))/this.nodes)*100;
-	var appallocated = ((this.allocated-(this.dead+this.admin+this.appdead))/this.nodes)*100;
+	var allocated = (this.allocated/this.nodes)*100;
+	var appallocated = ((this.allocated-this.appdead)/this.nodes)*100;
 	if(allocated < 0)
 		allocated = 0;
 	if(appallocated < 0)
@@ -105,11 +164,11 @@ BGP.prototype.updateinfo = function () {
 	var appdead = (this.appdead/this.nodes)*100;
 	var admin = (this.admin/this.nodes)*100;
         var contents = this.nodes + " / " + this.admin + " / " + this.allocated + " / " + this.dead + " / " + this.appdead;
-        var graphdebug = this.nodes + " = " + idlenodes + "/" + admin + " / " + allocated + " / " + appdead + "/" + dead;
+        var graphdebug = this.nodes + " = " + appidlenodes + "/" + admin + " / " + appallocated + " / " + appdead + "/" + dead;
 	// update info pane
         field.innerText = contents;	
-	field = document.getElementById("graph.debug");
-	field.innerText = graphdebug;
+	//field = document.getElementById("graph.debug");
+	//field.innerText = graphdebug;
 	// update chart
 	var dataval = 't:'+idlenodes+','+allocated+','+admin+','+'0,'+ dead+'|' + appidlenodes+','+appallocated+','+admin+','+appdead+','+dead;
 	var chartprefix="https://chart.googleapis.com/chart?cht=pc&chf=bg,s,65432100&chs=450x200&chd=";
