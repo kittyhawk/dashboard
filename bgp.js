@@ -109,9 +109,11 @@ BGP.prototype.kill = function( n, state ) {
 			this.viz.killNode( node );
 			this.allocated--;
 			this.dead++;
+			this.status[node] = "dead";
 		} else {
 			this.viz.killApp( node );
 			this.appdead++;
+			this.status[node] = "unreachable";
 		}
 	}
 	if((node < this.maxtree)&&(node != 0)&&(node != 20)) {
@@ -124,6 +126,20 @@ BGP.prototype.kill = function( n, state ) {
 		this.viz.render();
 		this.updateinfo();
 	}
+}
+
+BGP.prototype.killall = function( ) {
+	var count;
+	this.allocated = 0;
+	this.admin = 0;
+	this.appdead = 0;
+	this.dead = this.nodes;	
+	for(count = 0; count < this.nodes; count++) {
+		this.viz.killNode( count );
+		this.status[count] = "dead";	
+	}	
+	this.viz.render();
+	this.updateinfo();
 }
 
 BGP.prototype.killold = function( num ) {

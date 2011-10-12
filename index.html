@@ -142,7 +142,24 @@
         </canvas>
      <div class="panelfr">
        <h1 class="right">Application</h1>
-       <div id="chart_div"></div>
+	<table border=0>
+	<tr>
+	  <td>Application:</td>
+	  <td>MPI Ping-Pong</td>
+	</tr>
+	<tr>
+	  <td>Operating System:</td>
+	  <td>Linux 2.6.22</td>
+	</tr>
+	<tr>
+	  <td>Runtime:</td>
+	  <td>OpenMPI</td>
+	</tr>
+	<tr>
+	  <td>Monitoring Method:</td>
+	  <td>Simulated</td>
+	</tr>
+	</table>
      </div>
    </div>
    <div id="three" width=500>
@@ -159,6 +176,7 @@
 	<br/>
    	<input type="button" class="myButton" value="spin" onclick="myBGP.viz.spinctl()"/> 
 	<br/>
+   	<input type="button" class="myButton" value="kill (legacy)" onclick="myBGP.killall()"/>
    	<input type="button" class="myButton" value="kill core" onclick="myBGP.killcore()"/>
    	<input type="button" class="myButton" value="kill random" onclick="myBGP.killrand()"/>
 	<br/>
